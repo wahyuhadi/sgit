@@ -18,16 +18,18 @@ func GetList(session *http.Client, org, slug string) ([]string, error) {
 	for true {
 		opt := &github.ListOptions{Page: page, PerPage: 100}
 
-		// Ger Repos by Org - and Slug
+		// Get Repos by Org - and Slug
 		teams, resp, err := client.Teams.ListTeamReposBySlug(context.Background(), org, slug, opt)
 		if err != nil {
 			return nil, errors.New("[!] error when get list repo")
 		}
 
 		for _, repo := range teams {
-			fmt.Println("[+] Repo Name : ", *repo.HTMLURL)
+			fmt.Println("[+] Repos Owner : ", *repo.Owner.Login)
+			fmt.Println("[+] Repos Name : ", *repo.Name)
+			fmt.Println("[+] Repo URL : ", *repo.HTMLURL)
+			GetListCommits(session, *repo.Owner.Login, *repo.Name)
 		}
-
 		// get NextPage
 		isNextPage := resp.NextPage
 		if isNextPage == 0 {
